@@ -1,32 +1,29 @@
+import { Link, useLoaderData } from 'remix'
+
+import { queryRecords } from '~/data/db'
+
+export async function loader() {
+  const customers = await queryRecords(
+    'select customer_id, first_name, last_name from customer'
+  )
+
+  return { customers }
+}
+
 export default function Index() {
+  const { customers } = useLoaderData()
+
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      <h1>Welcome to Remix</h1>
+    <div style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.4' }}>
       <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
+        {customers.map((customer) => (
+          <li key={customer.customer_id}>
+            <Link to={`/customers/${customer.customer_id}`}>
+              {customer.first_name} {customer.last_name}
+            </Link>
+          </li>
+        ))}
       </ul>
     </div>
-  );
+  )
 }
